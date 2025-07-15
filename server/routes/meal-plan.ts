@@ -271,16 +271,67 @@ function calculateNutritionGoals(profile: UserProfile): NutritionGoals {
 // Filter meals based on dietary preferences
 function filterMealsByDiet(meals: Meal[], profile: UserProfile): Meal[] {
   return meals.filter((meal) => {
+    // Define non-vegetarian ingredients
+    const meatIngredients = [
+      "beef",
+      "chicken",
+      "turkey",
+      "pork",
+      "lamb",
+      "bacon",
+      "ham",
+      "sausage",
+      "salmon",
+      "tuna",
+      "fish",
+      "shrimp",
+      "crab",
+      "lobster",
+      "seafood",
+      "meat",
+    ];
+
+    const animalProducts = [
+      "milk",
+      "cheese",
+      "yogurt",
+      "butter",
+      "cream",
+      "eggs",
+      "honey",
+    ];
+
+    // Check if meal contains meat or fish
+    const hasMeatOrFish =
+      meal.tags.includes("non-vegetarian") ||
+      meal.tags.includes("meat") ||
+      meal.tags.includes("fish") ||
+      meal.ingredients.some((ingredient) =>
+        meatIngredients.some((meat) =>
+          ingredient.toLowerCase().includes(meat.toLowerCase()),
+        ),
+      );
+
+    // Check if meal contains any animal products
+    const hasAnimalProducts = meal.ingredients.some((ingredient) =>
+      animalProducts.some((animal) =>
+        ingredient.toLowerCase().includes(animal.toLowerCase()),
+      ),
+    );
+
     // Filter by diet type
-    if (profile.dietType === "vegan" && !meal.tags.includes("vegan")) {
-      return false;
+    if (profile.dietType === "vegan") {
+      // Vegans: exclude all animal products
+      if (!meal.tags.includes("vegan") || hasMeatOrFish || hasAnimalProducts) {
+        return false;
+      }
+    } else if (profile.dietType === "vegetarian") {
+      // Vegetarians: exclude meat and fish, but allow dairy/eggs
+      if (hasMeatOrFish) {
+        return false;
+      }
     }
-    if (
-      profile.dietType === "vegetarian" &&
-      meal.tags.includes("non-vegetarian")
-    ) {
-      return false;
-    }
+    // omnivore/non-vegetarian: no restrictions
 
     // Filter by allergies
     for (const allergy of profile.allergies) {

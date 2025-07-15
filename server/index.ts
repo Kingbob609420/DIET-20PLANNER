@@ -18,5 +18,9 @@ export function createServer() {
 
   app.get("/api/demo", handleDemo);
 
+  // Diet planner API routes
+  app.post("/api/generate-meal-plan", generateMealPlan);
+  app.post("/api/nutrition-goals", getNutritionGoals);
+
   return app;
 }

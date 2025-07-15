@@ -146,7 +146,7 @@ const sampleMeals: Meal[] = [
       "Roast sweet potato at 400°F for 25 minutes",
       "Steam broccoli until tender",
     ],
-    tags: ["high-protein", "omega-3", "low-carb"],
+    tags: ["high-protein", "omega-3", "low-carb", "non-vegetarian", "fish"],
   },
   {
     type: "dinner",

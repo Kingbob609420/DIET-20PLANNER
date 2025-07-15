@@ -248,32 +248,72 @@ export default function Results() {
               ],
               tags: ["Vegetarian", "High Fiber", "Protein"],
             },
-            {
-              type: "Lunch",
-              name: "Turkey and Hummus Wrap",
-              calories: 420,
-              protein: 25,
-              carbs: 45,
-              fat: 18,
-              prep_time: 10,
-              image:
-                "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
-              description:
-                "Lean turkey wrapped with fresh vegetables and hummus in a whole wheat tortilla",
-              ingredients: [
-                "1 whole wheat tortilla",
-                "4 oz sliced turkey",
-                "3 tbsp hummus",
-                "Lettuce, tomato, cucumber",
-                "Red bell pepper",
-              ],
-              instructions: [
-                "Spread hummus on tortilla",
-                "Layer turkey and vegetables",
-                "Roll tightly and slice in half",
-              ],
-              tags: ["High Protein", "Portable", "Balanced"],
-            },
+            // Choose lunch based on dietary preference
+            formData?.dietType === "vegetarian" ||
+            formData?.dietType === "vegan"
+              ? {
+                  type: "Lunch",
+                  name: "Mediterranean Chickpea Wrap",
+                  calories: 420,
+                  protein: 18,
+                  carbs: 55,
+                  fat: 16,
+                  prep_time: 15,
+                  image:
+                    "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
+                  description:
+                    "Fresh vegetables and protein-rich chickpeas wrapped in a whole wheat tortilla with tahini dressing",
+                  ingredients: [
+                    "1 whole wheat tortilla",
+                    "1/2 cup chickpeas, mashed",
+                    "3 tbsp tahini",
+                    "Lettuce, tomato, cucumber",
+                    "Red bell pepper",
+                    "Lemon juice",
+                  ],
+                  instructions: [
+                    "Mash chickpeas with tahini and lemon juice",
+                    "Spread mixture on tortilla",
+                    "Layer with fresh vegetables and roll tightly",
+                  ],
+                  tags: [
+                    "Vegetarian",
+                    "High Fiber",
+                    "Portable",
+                    "Mediterranean",
+                  ],
+                }
+              : {
+                  type: "Lunch",
+                  name: "Turkey and Hummus Wrap",
+                  calories: 420,
+                  protein: 25,
+                  carbs: 45,
+                  fat: 18,
+                  prep_time: 10,
+                  image:
+                    "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
+                  description:
+                    "Lean turkey wrapped with fresh vegetables and hummus in a whole wheat tortilla",
+                  ingredients: [
+                    "1 whole wheat tortilla",
+                    "4 oz sliced turkey",
+                    "3 tbsp hummus",
+                    "Lettuce, tomato, cucumber",
+                    "Red bell pepper",
+                  ],
+                  instructions: [
+                    "Spread hummus on tortilla",
+                    "Layer turkey and vegetables",
+                    "Roll tightly and slice in half",
+                  ],
+                  tags: [
+                    "High Protein",
+                    "Portable",
+                    "Balanced",
+                    "Non-Vegetarian",
+                  ],
+                },
             {
               type: "Dinner",
               name: "Vegetable Stir-fry with Tofu",

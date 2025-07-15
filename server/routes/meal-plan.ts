@@ -175,6 +175,64 @@ const sampleMeals: Meal[] = [
     ],
     tags: ["vegan", "high-protein", "asian"],
   },
+  {
+    type: "dinner",
+    name: "Lentil Curry with Brown Rice",
+    calories: 520,
+    protein: 24,
+    carbs: 65,
+    fat: 12,
+    prep_time: 35,
+    image:
+      "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop",
+    description:
+      "Hearty red lentil curry with aromatic spices served over brown rice",
+    ingredients: [
+      "1 cup red lentils",
+      "1 cup brown rice",
+      "1 onion, diced",
+      "2 cloves garlic",
+      "1 inch ginger",
+      "1 can coconut milk",
+      "Curry spices",
+      "Spinach",
+    ],
+    instructions: [
+      "Cook brown rice according to package instructions",
+      "Sauté onion, garlic, and ginger with spices",
+      "Add lentils, coconut milk, and simmer until tender",
+      "Stir in spinach and serve over rice",
+    ],
+    tags: ["vegan", "high-protein", "high-fiber", "indian"],
+  },
+  {
+    type: "dinner",
+    name: "Vegetarian Pasta Primavera",
+    calories: 465,
+    protein: 18,
+    carbs: 58,
+    fat: 16,
+    prep_time: 25,
+    image:
+      "https://images.unsplash.com/photo-1551183053-bf91a1d81141?w=400&h=300&fit=crop",
+    description:
+      "Fresh seasonal vegetables tossed with whole wheat pasta and parmesan",
+    ingredients: [
+      "8 oz whole wheat pasta",
+      "2 cups mixed vegetables (zucchini, bell peppers, broccoli)",
+      "1/4 cup parmesan cheese",
+      "2 tbsp olive oil",
+      "2 cloves garlic",
+      "Fresh herbs",
+    ],
+    instructions: [
+      "Cook pasta according to package directions",
+      "Sauté vegetables with garlic and olive oil",
+      "Toss pasta with vegetables and parmesan",
+      "Garnish with fresh herbs",
+    ],
+    tags: ["vegetarian", "high-fiber", "italian"],
+  },
 
   // Snack options
   {

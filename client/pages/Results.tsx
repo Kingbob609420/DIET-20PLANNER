@@ -122,33 +122,71 @@ export default function Results() {
               ],
               tags: ["Vegetarian", "High Fiber", "Mediterranean"],
             },
-            {
-              type: "Dinner",
-              name: "Grilled Salmon with Sweet Potato",
-              calories: 550,
-              protein: 40,
-              carbs: 35,
-              fat: 25,
-              prep_time: 30,
-              image:
-                "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop",
-              description:
-                "Perfectly grilled salmon with roasted sweet potato and steamed broccoli",
-              ingredients: [
-                "6 oz salmon fillet",
-                "1 medium sweet potato",
-                "1 cup broccoli",
-                "2 tbsp olive oil",
-                "Lemon slices",
-                "Herbs for seasoning",
-              ],
-              instructions: [
-                "Season salmon with herbs and grill for 4-5 minutes per side",
-                "Roast sweet potato at 400°F for 25 minutes",
-                "Steam broccoli until tender",
-              ],
-              tags: ["High Protein", "Omega-3", "Low Carb"],
-            },
+            // Choose dinner based on dietary preference
+            formData?.dietType === "vegetarian" ||
+            formData?.dietType === "vegan"
+              ? {
+                  type: "Dinner",
+                  name: "Lentil Curry with Brown Rice",
+                  calories: 520,
+                  protein: 24,
+                  carbs: 65,
+                  fat: 12,
+                  prep_time: 35,
+                  image:
+                    "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop",
+                  description:
+                    "Hearty red lentil curry with aromatic spices served over brown rice",
+                  ingredients: [
+                    "1 cup red lentils",
+                    "1 cup brown rice",
+                    "1 onion, diced",
+                    "2 cloves garlic",
+                    "1 inch ginger",
+                    "1 can coconut milk",
+                    "Curry spices",
+                    "Spinach",
+                  ],
+                  instructions: [
+                    "Cook brown rice according to package instructions",
+                    "Sauté onion, garlic, and ginger with spices",
+                    "Add lentils, coconut milk, and simmer until tender",
+                    "Stir in spinach and serve over rice",
+                  ],
+                  tags: ["Vegan", "High Protein", "High Fiber", "Indian"],
+                }
+              : {
+                  type: "Dinner",
+                  name: "Grilled Salmon with Sweet Potato",
+                  calories: 550,
+                  protein: 40,
+                  carbs: 35,
+                  fat: 25,
+                  prep_time: 30,
+                  image:
+                    "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop",
+                  description:
+                    "Perfectly grilled salmon with roasted sweet potato and steamed broccoli",
+                  ingredients: [
+                    "6 oz salmon fillet",
+                    "1 medium sweet potato",
+                    "1 cup broccoli",
+                    "2 tbsp olive oil",
+                    "Lemon slices",
+                    "Herbs for seasoning",
+                  ],
+                  instructions: [
+                    "Season salmon with herbs and grill for 4-5 minutes per side",
+                    "Roast sweet potato at 400°F for 25 minutes",
+                    "Steam broccoli until tender",
+                  ],
+                  tags: [
+                    "High Protein",
+                    "Omega-3",
+                    "Low Carb",
+                    "Non-Vegetarian",
+                  ],
+                },
             {
               type: "Snack",
               name: "Greek Yogurt with Nuts",

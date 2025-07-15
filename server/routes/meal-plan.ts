@@ -117,7 +117,7 @@ const sampleMeals: Meal[] = [
       "Layer turkey and vegetables",
       "Roll tightly and slice in half",
     ],
-    tags: ["high-protein", "portable", "balanced"],
+    tags: ["high-protein", "portable", "balanced", "non-vegetarian", "meat"],
   },
 
   // Dinner options

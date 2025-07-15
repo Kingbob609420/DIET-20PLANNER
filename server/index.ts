@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
+import { generateMealPlan, getNutritionGoals } from "./routes/meal-plan";
 
 export function createServer() {
   const app = express();

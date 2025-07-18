@@ -686,7 +686,22 @@ function generateFallbackMealPlan(
 
   const createMealForDay = (day: string, dayIndex: number): DayMealPlan => {
     const meals: Meal[] = [];
-    const dietMeals = mealDatabase[profile.dietType] || mealDatabase.omnivore;
+
+    console.log(`Creating meals for ${day}, diet type: ${profile.dietType}`);
+
+    // Ensure we have the right diet type
+    let selectedDietType = profile.dietType;
+    if (!mealDatabase[selectedDietType]) {
+      console.log(
+        `Diet type ${selectedDietType} not found, defaulting to omnivore`,
+      );
+      selectedDietType = "omnivore";
+    }
+
+    const dietMeals = mealDatabase[selectedDietType];
+    console.log(
+      `Using diet meals for: ${selectedDietType}, breakfast options: ${dietMeals.breakfasts.length}`,
+    );
 
     // Select different meals for each day to ensure variety
     const breakfastOption =

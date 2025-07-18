@@ -124,10 +124,10 @@ OUTPUT FORMAT - Return valid JSON only:
           "carbs": 45,
           "fat": 12,
           "prep_time": 15,
-          "image": "https://images.unsplash.com/photo-[relevant-food-photo]?w=400&h=300&fit=crop",
+                    "image": "https://images.unsplash.com/photo-[relevant-food-photo]?w=400&h=300&fit=crop",
           "description": "Appealing description of the meal",
-          "ingredients": ["ingredient 1", "ingredient 2", "etc"],
-          "instructions": ["step 1", "step 2", "etc"],
+          "ingredients": ["1 cup ingredient 1", "2 tbsp ingredient 2", "etc with specific measurements"],
+          "instructions": ["Detailed step 1 with specific temperatures, times, and techniques", "Comprehensive step 2 with cooking methods and tips", "Complete step 3 with plating and serving suggestions"],
           "tags": ["relevant", "tags", "here"]
         }
       ],

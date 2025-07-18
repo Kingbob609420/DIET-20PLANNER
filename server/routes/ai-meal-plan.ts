@@ -104,7 +104,7 @@ REQUIREMENTS:
 3. Strictly follow the dietary restrictions (${profile.dietType})
 4. ${profile.allergies.length > 0 ? `ABSOLUTELY AVOID all foods containing: ${profile.allergies.join(", ")}` : "No allergy restrictions"}
 5. Include realistic cooking times based on preference (${profile.cookingTime})
-6. Provide detailed recipes with ingredients and instructions
+6. Provide VERY DETAILED recipes with specific measurements and comprehensive step-by-step cooking instructions
 7. Include high-quality, appealing meal names
 8. Vary the cuisine types for interesting variety across all 7 days
 9. Ensure each day has completely different meals (no repetition)

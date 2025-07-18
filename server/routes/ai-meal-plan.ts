@@ -618,30 +618,67 @@ function generateFallbackMealPlan(
       ],
       dinners: [
         {
-          name: "Grilled Chicken Dinner",
+          name: "Herb-Crusted Chicken with Roasted Vegetables",
           base_ingredients: [
-            "chicken breast",
+            "6 oz chicken breast",
             "sweet potato",
-            "broccoli",
+            "brussels sprouts",
             "olive oil",
+            "fresh herbs",
           ],
           description:
-            "Lean grilled chicken with roasted sweet potato and steamed broccoli",
-        },
-        {
-          name: "Fish and Vegetables",
-          base_ingredients: ["white fish", "vegetables", "brown rice", "herbs"],
-          description: "Baked fish with seasonal vegetables and brown rice",
-        },
-        {
-          name: "Lean Beef Stir-fry",
-          base_ingredients: [
-            "lean beef",
-            "vegetables",
-            "brown rice",
-            "soy sauce",
+            "Juicy herb-crusted chicken with perfectly roasted root vegetables",
+          instructions: [
+            "Preheat oven to 425°F and line baking sheet with parchment",
+            "Rub chicken breast with olive oil, salt, pepper, and fresh herbs",
+            "Cut sweet potato and brussels sprouts into uniform pieces",
+            "Toss vegetables with olive oil, salt, and pepper",
+            "Roast vegetables for 15 minutes, then add chicken to same pan",
+            "Cook for 20-25 more minutes until chicken reaches 165°F internal temp",
+            "Let chicken rest 5 minutes before slicing and serving",
           ],
-          description: "Quick stir-fry with lean beef and fresh vegetables",
+        },
+        {
+          name: "Pan-Seared Salmon with Quinoa",
+          base_ingredients: [
+            "6 oz salmon fillet",
+            "quinoa",
+            "asparagus",
+            "lemon",
+            "dill",
+          ],
+          description:
+            "Perfectly seared salmon with fluffy quinoa and fresh asparagus",
+          instructions: [
+            "Cook quinoa in vegetable broth according to package directions",
+            "Trim asparagus and steam until bright green and tender",
+            "Season salmon with salt, pepper, and fresh dill",
+            "Heat oil in pan over medium-high heat until shimmering",
+            "Sear salmon skin-side up for 4 minutes, then flip carefully",
+            "Cook 3-4 more minutes until fish flakes easily",
+            "Serve over quinoa with asparagus and lemon wedges",
+          ],
+        },
+        {
+          name: "Lean Beef and Sweet Potato Skillet",
+          base_ingredients: [
+            "6 oz lean ground beef",
+            "diced sweet potato",
+            "bell peppers",
+            "onions",
+            "cumin",
+          ],
+          description:
+            "One-pan dinner with seasoned ground beef and colorful vegetables",
+          instructions: [
+            "Heat large skillet over medium-high heat",
+            "Cook ground beef, breaking it up with spoon until browned",
+            "Remove beef and set aside, leaving 1 tbsp fat in pan",
+            "Add diced sweet potato and cook 8-10 minutes until tender",
+            "Add bell peppers and onions, cook 5 more minutes",
+            "Return beef to pan, season with cumin, salt, and pepper",
+            "Cook 2-3 more minutes until heated through",
+          ],
         },
       ],
     },

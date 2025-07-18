@@ -96,6 +96,11 @@ NUTRITION TARGETS (per day):
 - Carbs: ${goals.dailyCarbs}g  
 - Fat: ${goals.dailyFat}g
 
+CRITICAL GOAL-BASED MEAL REQUIREMENTS:
+${profile.goal === "lose" ? "- WEIGHT LOSS FOCUS: Prioritize high-protein, low-calorie, nutrient-dense meals. Choose lean proteins, non-starchy vegetables, and complex carbs. Avoid fried foods, heavy sauces, and high-calorie ingredients. Create satisfying meals under calorie targets that promote fat loss." : ""}
+${profile.goal === "gain" ? "- WEIGHT GAIN FOCUS: Prioritize calorie-dense, nutrient-rich meals with healthy fats and protein. Include nuts, avocados, whole grains, and larger portions. Add extra olive oil, nut butters, and protein-rich ingredients. Create hearty, filling meals for muscle building." : ""}
+${profile.goal === "maintain" ? "- WEIGHT MAINTENANCE FOCUS: Create balanced, sustainable meals with moderate portions. Include good variety of proteins, carbs, and healthy fats. Focus on nutritional balance and meal satisfaction for long-term adherence." : ""}
+
 CRITICAL DIETARY REQUIREMENTS:
 ${profile.dietType === "vegan" ? "- VEGAN ONLY: NO animal products whatsoever. No meat, fish, dairy, eggs, honey, or any animal-derived ingredients." : ""}
 ${profile.dietType === "vegetarian" ? "- VEGETARIAN ONLY: NO meat or fish. Dairy and eggs are allowed, but absolutely no chicken, beef, pork, fish, seafood, or any meat products." : ""}

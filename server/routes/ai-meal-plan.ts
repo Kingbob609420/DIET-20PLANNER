@@ -96,12 +96,17 @@ NUTRITION TARGETS (per day):
 - Carbs: ${goals.dailyCarbs}g  
 - Fat: ${goals.dailyFat}g
 
+CRITICAL DIETARY REQUIREMENTS:
+${profile.dietType === "vegan" ? "- VEGAN ONLY: NO animal products whatsoever. No meat, fish, dairy, eggs, honey, or any animal-derived ingredients." : ""}
+${profile.dietType === "vegetarian" ? "- VEGETARIAN ONLY: NO meat or fish. Dairy and eggs are allowed, but absolutely no chicken, beef, pork, fish, seafood, or any meat products." : ""}
+${profile.dietType === "omnivore" ? "- OMNIVORE: All food types allowed including meat, fish, dairy, and plant foods." : ""}
+
 CRITICAL ALLERGY WARNING: ${profile.allergies.length > 0 ? `This person is ALLERGIC to: ${profile.allergies.join(", ").toUpperCase()}. DO NOT include these ingredients in ANY meal, recipe, or ingredient list. This is a MEDICAL REQUIREMENT.` : "No food allergies reported."}
 
 REQUIREMENTS:
 1. Generate exactly 7 days (Monday through Sunday)
 2. Each day should have ${profile.mealsPerDay} meals (breakfast, lunch, dinner${profile.mealsPerDay > 3 ? " + snacks" : ""})
-3. Strictly follow the dietary restrictions (${profile.dietType})
+3. STRICTLY ADHERE to the ${profile.dietType.toUpperCase()} diet - this is NON-NEGOTIABLE
 4. ${profile.allergies.length > 0 ? `ABSOLUTELY AVOID all foods containing: ${profile.allergies.join(", ")}` : "No allergy restrictions"}
 5. Include realistic cooking times based on preference (${profile.cookingTime})
 6. Provide VERY DETAILED recipes with specific measurements and comprehensive step-by-step cooking instructions

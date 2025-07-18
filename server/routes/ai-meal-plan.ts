@@ -111,14 +111,16 @@ CRITICAL ALLERGY WARNING: ${profile.allergies.length > 0 ? `This person is ALLER
 REQUIREMENTS:
 1. Generate exactly 7 days (Monday through Sunday)
 2. Each day should have ${profile.mealsPerDay} meals (breakfast, lunch, dinner${profile.mealsPerDay > 3 ? " + snacks" : ""})
-3. STRICTLY ADHERE to the ${profile.dietType.toUpperCase()} diet - this is NON-NEGOTIABLE
-4. ${profile.allergies.length > 0 ? `ABSOLUTELY AVOID all foods containing: ${profile.allergies.join(", ")}` : "No allergy restrictions"}
-5. Include realistic cooking times based on preference (${profile.cookingTime})
-6. Provide VERY DETAILED recipes with specific measurements and comprehensive step-by-step cooking instructions
-7. Include high-quality, appealing meal names
-8. Vary the cuisine types for interesting variety across all 7 days
-9. Ensure each day has completely different meals (no repetition)
-10. Ensure nutritional balance meets the targets
+3. PRIORITIZE ${profile.goal.toUpperCase()} WEIGHT GOAL - choose meal types and portions specifically for this objective
+4. STRICTLY ADHERE to the ${profile.dietType.toUpperCase()} diet - this is NON-NEGOTIABLE
+5. ${profile.allergies.length > 0 ? `ABSOLUTELY AVOID all foods containing: ${profile.allergies.join(", ")}` : "No allergy restrictions"}
+6. Ensure meal choices directly support the ${profile.goal} weight goal with appropriate calorie density and macronutrient ratios
+7. Include realistic cooking times based on preference (${profile.cookingTime})
+8. Provide VERY DETAILED recipes with specific measurements and comprehensive step-by-step cooking instructions
+9. Include high-quality, appealing meal names
+10. Vary the cuisine types for interesting variety across all 7 days
+11. Ensure each day has completely different meals (no repetition)
+12. Ensure nutritional balance meets the targets AND supports the ${profile.goal} weight goal
 
 OUTPUT FORMAT - Return valid JSON only:
 {

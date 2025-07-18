@@ -173,6 +173,8 @@ function generateFallbackMealPlan(
   console.log("Using fallback meal plan generation with allergy filtering");
 
   // Define meal options by category that respect dietary restrictions
+  console.log(`Generating fallback meals for diet type: ${profile.dietType}`);
+
   const mealDatabase = {
     vegan: {
       breakfasts: [

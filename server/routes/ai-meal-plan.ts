@@ -694,7 +694,9 @@ function generateFallbackMealPlan(
   const createMealForDay = (day: string, dayIndex: number): DayMealPlan => {
     const meals: Meal[] = [];
 
-    console.log(`Creating meals for ${day}, diet type: ${profile.dietType}`);
+    console.log(
+      `Creating meals for ${day}, diet type: ${profile.dietType}, goal: ${profile.goal}`,
+    );
 
     // Ensure we have the right diet type
     let selectedDietType = profile.dietType;
@@ -707,7 +709,7 @@ function generateFallbackMealPlan(
 
     const dietMeals = mealDatabase[selectedDietType];
     console.log(
-      `Using diet meals for: ${selectedDietType}, breakfast options: ${dietMeals.breakfasts.length}`,
+      `Using diet meals for: ${selectedDietType}, goal: ${profile.goal}, breakfast options: ${dietMeals.breakfasts.length}`,
     );
 
     // Select different meals for each day to ensure variety

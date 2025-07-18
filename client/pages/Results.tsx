@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useLocation, Link } from "react-router-dom";
+import type { WeeklyMealPlan } from "@shared/diet-api";
 import { Button } from "@/components/ui/button";
 import {
   Card,

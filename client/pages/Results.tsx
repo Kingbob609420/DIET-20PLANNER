@@ -27,350 +27,84 @@ import {
   Leaf,
   Target,
   Info,
+  AlertCircle,
+  RefreshCw,
 } from "lucide-react";
-
-interface MealPlan {
-  day: string;
-  meals: {
-    type: string;
-    name: string;
-    calories: number;
-    protein: number;
-    carbs: number;
-    fat: number;
-    prep_time: number;
-    image: string;
-    description: string;
-    ingredients: string[];
-    instructions: string[];
-    tags: string[];
-  }[];
-  totalCalories: number;
-  totalProtein: number;
-  totalCarbs: number;
-  totalFat: number;
-}
+import type { WeeklyMealPlan } from "@shared/diet-api";
 
 export default function Results() {
   const location = useLocation();
   const { formData } = location.state || {};
-  const [mealPlan, setMealPlan] = useState<MealPlan[]>([]);
+  const [mealPlan, setMealPlan] = useState<WeeklyMealPlan | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
 
+  const generateMealPlan = async () => {
+    if (!formData) {
+      setError(
+        "No user profile data available. Please go back and fill out the form.",
+      );
+      setLoading(false);
+      return;
+    }
+
+    setLoading(true);
+    setError(null);
+
+    try {
+      console.log("Generating AI meal plan for:", formData);
+
+      const response = await fetch("/api/generate-meal-plan", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          userProfile: {
+            age: parseInt(formData.age),
+            gender: formData.gender,
+            height: parseInt(formData.height),
+            weight: parseInt(formData.weight),
+            activityLevel: formData.activityLevel,
+            goal: formData.goal,
+            dietType: formData.dietType,
+            allergies: formData.allergies || [],
+            restrictions: formData.restrictions || [],
+            mealsPerDay: parseInt(formData.mealsPerDay),
+            cookingTime: formData.cookingTime,
+            budget: formData.budget,
+          },
+        }),
+      });
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.json();
+
+      if (data.success && data.mealPlan) {
+        setMealPlan(data.mealPlan);
+        console.log("AI meal plan generated successfully:", data.mealPlan);
+      } else {
+        throw new Error(data.error || "Failed to generate meal plan");
+      }
+    } catch (err) {
+      console.error("Error generating meal plan:", err);
+      setError(
+        err instanceof Error
+          ? err.message
+          : "Failed to generate meal plan. Please try again.",
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    // Simulate AI meal plan generation
-    const generateMealPlan = () => {
-      const sampleMealPlan: MealPlan[] = [
-        {
-          day: "Monday",
-          totalCalories: 1800,
-          totalProtein: 120,
-          totalCarbs: 180,
-          totalFat: 70,
-          meals: [
-            {
-              type: "Breakfast",
-              name: "Quinoa Berry Bowl",
-              calories: 350,
-              protein: 12,
-              carbs: 45,
-              fat: 15,
-              prep_time: 15,
-              image:
-                "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=300&fit=crop",
-              description:
-                "A nutritious start to your day with quinoa, mixed berries, and almond milk",
-              ingredients: [
-                "1 cup cooked quinoa",
-                "1/2 cup mixed berries",
-                "1/4 cup almonds",
-                "1 tbsp honey",
-                "1/2 cup almond milk",
-              ],
-              instructions: [
-                "Cook quinoa according to package instructions",
-                "Top with fresh berries and almonds",
-                "Drizzle with honey and serve with almond milk",
-              ],
-              tags: ["Vegan", "High Protein", "Gluten-Free"],
-            },
-            {
-              type: "Lunch",
-              name: "Mediterranean Chickpea Salad",
-              calories: 450,
-              protein: 18,
-              carbs: 55,
-              fat: 20,
-              prep_time: 20,
-              image:
-                "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=400&h=300&fit=crop",
-              description:
-                "Fresh and vibrant salad with chickpeas, vegetables, and tahini dressing",
-              ingredients: [
-                "1 can chickpeas, drained",
-                "2 cups mixed greens",
-                "1 cucumber, diced",
-                "1/2 red onion, sliced",
-                "2 tbsp tahini",
-                "1 lemon, juiced",
-              ],
-              instructions: [
-                "Rinse and drain chickpeas",
-                "Combine all vegetables in a large bowl",
-                "Whisk tahini with lemon juice and pour over salad",
-              ],
-              tags: ["Vegetarian", "High Fiber", "Mediterranean"],
-            },
-            // Choose dinner based on dietary preference
-            formData?.dietType === "vegetarian" ||
-            formData?.dietType === "vegan"
-              ? {
-                  type: "Dinner",
-                  name: "Lentil Curry with Brown Rice",
-                  calories: 520,
-                  protein: 24,
-                  carbs: 65,
-                  fat: 12,
-                  prep_time: 35,
-                  image:
-                    "https://images.unsplash.com/photo-1585937421612-70a008356fbe?w=400&h=300&fit=crop",
-                  description:
-                    "Hearty red lentil curry with aromatic spices served over brown rice",
-                  ingredients: [
-                    "1 cup red lentils",
-                    "1 cup brown rice",
-                    "1 onion, diced",
-                    "2 cloves garlic",
-                    "1 inch ginger",
-                    "1 can coconut milk",
-                    "Curry spices",
-                    "Spinach",
-                  ],
-                  instructions: [
-                    "Cook brown rice according to package instructions",
-                    "Sauté onion, garlic, and ginger with spices",
-                    "Add lentils, coconut milk, and simmer until tender",
-                    "Stir in spinach and serve over rice",
-                  ],
-                  tags: ["Vegan", "High Protein", "High Fiber", "Indian"],
-                }
-              : {
-                  type: "Dinner",
-                  name: "Grilled Salmon with Sweet Potato",
-                  calories: 550,
-                  protein: 40,
-                  carbs: 35,
-                  fat: 25,
-                  prep_time: 30,
-                  image:
-                    "https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=400&h=300&fit=crop",
-                  description:
-                    "Perfectly grilled salmon with roasted sweet potato and steamed broccoli",
-                  ingredients: [
-                    "6 oz salmon fillet",
-                    "1 medium sweet potato",
-                    "1 cup broccoli",
-                    "2 tbsp olive oil",
-                    "Lemon slices",
-                    "Herbs for seasoning",
-                  ],
-                  instructions: [
-                    "Season salmon with herbs and grill for 4-5 minutes per side",
-                    "Roast sweet potato at 400°F for 25 minutes",
-                    "Steam broccoli until tender",
-                  ],
-                  tags: [
-                    "High Protein",
-                    "Omega-3",
-                    "Low Carb",
-                    "Non-Vegetarian",
-                  ],
-                },
-            {
-              type: "Snack",
-              name: "Greek Yogurt with Nuts",
-              calories: 250,
-              protein: 20,
-              carbs: 15,
-              fat: 12,
-              prep_time: 5,
-              image:
-                "https://images.unsplash.com/photo-1488477181946-6428a0291777?w=400&h=300&fit=crop",
-              description:
-                "Creamy Greek yogurt topped with mixed nuts and honey",
-              ingredients: [
-                "1 cup Greek yogurt",
-                "1/4 cup mixed nuts",
-                "1 tsp honey",
-                "Cinnamon to taste",
-              ],
-              instructions: [
-                "Add yogurt to bowl",
-                "Top with nuts and drizzle with honey",
-                "Sprinkle with cinnamon",
-              ],
-              tags: ["High Protein", "Probiotics", "Quick"],
-            },
-          ],
-        },
-        // Add more days...
-        {
-          day: "Tuesday",
-          totalCalories: 1750,
-          totalProtein: 115,
-          totalCarbs: 175,
-          totalFat: 65,
-          meals: [
-            {
-              type: "Breakfast",
-              name: "Avocado Toast with Poached Egg",
-              calories: 380,
-              protein: 15,
-              carbs: 30,
-              fat: 22,
-              prep_time: 12,
-              image:
-                "https://images.unsplash.com/photo-1482049016688-2d3e1b311543?w=400&h=300&fit=crop",
-              description:
-                "Whole grain toast topped with creamy avocado and a perfectly poached egg",
-              ingredients: [
-                "2 slices whole grain bread",
-                "1 ripe avocado",
-                "2 eggs",
-                "Salt and pepper",
-                "Red pepper flakes",
-              ],
-              instructions: [
-                "Toast bread until golden",
-                "Mash avocado and spread on toast",
-                "Poach eggs and place on top",
-              ],
-              tags: ["Vegetarian", "High Fiber", "Protein"],
-            },
-            // Choose lunch based on dietary preference
-            formData?.dietType === "vegetarian" ||
-            formData?.dietType === "vegan"
-              ? {
-                  type: "Lunch",
-                  name: "Mediterranean Chickpea Wrap",
-                  calories: 420,
-                  protein: 18,
-                  carbs: 55,
-                  fat: 16,
-                  prep_time: 15,
-                  image:
-                    "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
-                  description:
-                    "Fresh vegetables and protein-rich chickpeas wrapped in a whole wheat tortilla with tahini dressing",
-                  ingredients: [
-                    "1 whole wheat tortilla",
-                    "1/2 cup chickpeas, mashed",
-                    "3 tbsp tahini",
-                    "Lettuce, tomato, cucumber",
-                    "Red bell pepper",
-                    "Lemon juice",
-                  ],
-                  instructions: [
-                    "Mash chickpeas with tahini and lemon juice",
-                    "Spread mixture on tortilla",
-                    "Layer with fresh vegetables and roll tightly",
-                  ],
-                  tags: [
-                    "Vegetarian",
-                    "High Fiber",
-                    "Portable",
-                    "Mediterranean",
-                  ],
-                }
-              : {
-                  type: "Lunch",
-                  name: "Turkey and Hummus Wrap",
-                  calories: 420,
-                  protein: 25,
-                  carbs: 45,
-                  fat: 18,
-                  prep_time: 10,
-                  image:
-                    "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
-                  description:
-                    "Lean turkey wrapped with fresh vegetables and hummus in a whole wheat tortilla",
-                  ingredients: [
-                    "1 whole wheat tortilla",
-                    "4 oz sliced turkey",
-                    "3 tbsp hummus",
-                    "Lettuce, tomato, cucumber",
-                    "Red bell pepper",
-                  ],
-                  instructions: [
-                    "Spread hummus on tortilla",
-                    "Layer turkey and vegetables",
-                    "Roll tightly and slice in half",
-                  ],
-                  tags: [
-                    "High Protein",
-                    "Portable",
-                    "Balanced",
-                    "Non-Vegetarian",
-                  ],
-                },
-            {
-              type: "Dinner",
-              name: "Vegetable Stir-fry with Tofu",
-              calories: 480,
-              protein: 22,
-              carbs: 45,
-              fat: 18,
-              prep_time: 25,
-              image:
-                "https://images.unsplash.com/photo-1512621776951-a57141f2eefd?w=400&h=300&fit=crop",
-              description:
-                "Colorful mix of fresh vegetables stir-fried with protein-rich tofu",
-              ingredients: [
-                "6 oz firm tofu",
-                "2 cups mixed vegetables",
-                "1 cup brown rice",
-                "2 tbsp soy sauce",
-                "1 tbsp sesame oil",
-                "Ginger and garlic",
-              ],
-              instructions: [
-                "Press and cube tofu, then pan-fry until golden",
-                "Stir-fry vegetables with garlic and ginger",
-                "Combine with tofu and serve over rice",
-              ],
-              tags: ["Vegan", "High Protein", "Asian"],
-            },
-            {
-              type: "Snack",
-              name: "Apple with Almond Butter",
-              calories: 220,
-              protein: 8,
-              carbs: 25,
-              fat: 12,
-              prep_time: 2,
-              image:
-                "https://images.unsplash.com/photo-1619566636858-adf3ef46400b?w=400&h=300&fit=crop",
-              description: "Crisp apple slices with creamy almond butter",
-              ingredients: ["1 medium apple", "2 tbsp almond butter"],
-              instructions: [
-                "Core and slice apple",
-                "Serve with almond butter for dipping",
-              ],
-              tags: ["Natural", "Fiber", "Healthy Fats"],
-            },
-          ],
-        },
-      ];
-
-      setTimeout(() => {
-        setMealPlan(sampleMealPlan);
-        setLoading(false);
-      }, 2000);
-    };
-
     generateMealPlan();
-  }, [formData]);
+  }, []);
 
   if (loading) {
     return (
@@ -395,15 +129,16 @@ export default function Results() {
               <ChefHat className="w-8 h-8 text-primary animate-pulse" />
             </div>
             <h2 className="text-2xl font-bold mb-4">
-              Generating Your Meal Plan
+              AI is Creating Your Personalized Meal Plan
             </h2>
             <p className="text-muted-foreground mb-6">
-              Our AI is creating a personalized nutrition plan based on your
-              preferences...
+              Our AI nutritionist is analyzing your profile and generating meals
+              perfectly suited to your dietary preferences, goals, and
+              lifestyle...
             </p>
             <Progress value={66} className="h-2" />
             <p className="text-sm text-muted-foreground mt-2">
-              This may take a few moments
+              This may take up to 30 seconds
             </p>
           </div>
         </div>
@@ -411,7 +146,58 @@ export default function Results() {
     );
   }
 
-  const currentDayPlan = mealPlan[selectedDay];
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-green-950/20 dark:via-background dark:to-green-950/20">
+        <nav className="border-b border-border/40 bg-background/80 backdrop-blur-xl">
+          <div className="container mx-auto px-4 py-4 flex items-center justify-between">
+            <Link to="/planner" className="flex items-center space-x-2">
+              <ArrowLeft className="w-5 h-5" />
+              <div className="flex items-center space-x-2">
+                <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
+                  <Utensils className="w-5 h-5 text-primary-foreground" />
+                </div>
+                <span className="text-xl font-bold">NutriPlan</span>
+              </div>
+            </Link>
+          </div>
+        </nav>
+
+        <div className="container mx-auto px-4 py-20 text-center">
+          <div className="max-w-md mx-auto">
+            <div className="w-16 h-16 bg-destructive/10 rounded-full flex items-center justify-center mx-auto mb-6">
+              <AlertCircle className="w-8 h-8 text-destructive" />
+            </div>
+            <h2 className="text-2xl font-bold mb-4">
+              Oops! Something went wrong
+            </h2>
+            <p className="text-muted-foreground mb-6">{error}</p>
+            <div className="flex flex-col sm:flex-row gap-4 justify-center">
+              <Button
+                onClick={generateMealPlan}
+                className="bg-primary hover:bg-primary/90"
+              >
+                <RefreshCw className="w-4 h-4 mr-2" />
+                Try Again
+              </Button>
+              <Link to="/planner">
+                <Button variant="outline">
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Form
+                </Button>
+              </Link>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!mealPlan) {
+    return null;
+  }
+
+  const currentDayPlan = mealPlan.days[selectedDay];
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-green-950/20 dark:via-background dark:to-green-950/20">
@@ -437,6 +223,10 @@ export default function Results() {
               <Download className="w-4 h-4 mr-2" />
               Download
             </Button>
+            <Button onClick={generateMealPlan} variant="outline" size="sm">
+              <RefreshCw className="w-4 h-4 mr-2" />
+              Regenerate
+            </Button>
           </div>
         </div>
       </nav>
@@ -448,12 +238,20 @@ export default function Results() {
             <Star className="w-8 h-8 text-primary" />
           </div>
           <h1 className="text-3xl md:text-4xl font-bold mb-4">
-            Your Personalized Meal Plan
+            Your AI-Generated Meal Plan
           </h1>
           <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-            Based on your profile, we've created a custom nutrition plan
-            tailored to your goals and preferences.
+            Personalized for your unique profile, dietary preferences, and
+            nutrition goals
           </p>
+          <Badge
+            variant="secondary"
+            className="mt-4 bg-primary/10 text-primary border-primary/20"
+          >
+            <Zap className="w-4 h-4 mr-1" />
+            AI-Powered • Generated{" "}
+            {new Date(mealPlan.generatedAt).toLocaleDateString()}
+          </Badge>
         </div>
 
         {/* User Summary */}
@@ -482,7 +280,7 @@ export default function Results() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-2xl font-bold text-primary capitalize">
                     {formData.activityLevel}
                   </div>
                   <div className="text-sm text-muted-foreground">
@@ -490,7 +288,7 @@ export default function Results() {
                   </div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold text-primary">
+                  <div className="text-2xl font-bold text-primary capitalize">
                     {formData.dietType}
                   </div>
                   <div className="text-sm text-muted-foreground">Diet Type</div>
@@ -509,12 +307,12 @@ export default function Results() {
               className="bg-primary/10 text-primary border-primary/20"
             >
               <Calendar className="w-4 h-4 mr-1" />
-              Week 1
+              Average: {mealPlan.averageDailyCalories} cal/day
             </Badge>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-7 gap-2 mb-6">
-            {mealPlan.map((day, index) => (
+            {mealPlan.days.map((day, index) => (
               <Button
                 key={day.day}
                 variant={selectedDay === index ? "default" : "outline"}
@@ -526,17 +324,6 @@ export default function Results() {
                 onClick={() => setSelectedDay(index)}
               >
                 {day.day.slice(0, 3)}
-              </Button>
-            ))}
-            {/* Placeholder buttons for remaining days */}
-            {Array.from({ length: 7 - mealPlan.length }).map((_, index) => (
-              <Button
-                key={`placeholder-${index}`}
-                variant="outline"
-                disabled
-                className="opacity-50"
-              >
-                Day {mealPlan.length + index + 1}
               </Button>
             ))}
           </div>
@@ -595,7 +382,7 @@ export default function Results() {
                       <div className="absolute top-4 left-4">
                         <Badge
                           variant="secondary"
-                          className="bg-background/80 backdrop-blur-sm"
+                          className="bg-background/80 backdrop-blur-sm capitalize"
                         >
                           {meal.type}
                         </Badge>
@@ -658,7 +445,7 @@ export default function Results() {
                           <Badge
                             key={tagIndex}
                             variant="outline"
-                            className="text-xs"
+                            className="text-xs capitalize"
                           >
                             {tag}
                           </Badge>
@@ -718,17 +505,17 @@ export default function Results() {
         {/* CTA */}
         <Card className="mt-12 text-center bg-primary/5 border-primary/20">
           <CardContent className="py-8">
-            <h3 className="text-xl font-bold mb-4">Love Your Meal Plan?</h3>
+            <h3 className="text-xl font-bold mb-4">Love Your AI Meal Plan?</h3>
             <p className="text-muted-foreground mb-6 max-w-md mx-auto">
-              Get access to more personalized meal plans, shopping lists, and
-              nutrition tracking features.
+              This plan was generated specifically for your unique profile and
+              goals. Need adjustments? Generate a new plan anytime!
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button className="bg-primary hover:bg-primary/90">
                 <Heart className="w-4 h-4 mr-2" />
                 Save This Plan
               </Button>
-              <Button variant="outline">
+              <Button onClick={generateMealPlan} variant="outline">
                 <Zap className="w-4 h-4 mr-2" />
                 Generate New Plan
               </Button>

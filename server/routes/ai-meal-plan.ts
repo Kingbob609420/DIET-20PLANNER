@@ -613,10 +613,13 @@ function generateFallbackMealPlan(
         "https://images.unsplash.com/photo-1511690743698-d9d85f2fbf38?w=400&h=300&fit=crop",
       description: breakfastOption.description,
       ingredients: safeBreakfastIngredients,
-      instructions: [
-        "Prepare all ingredients",
-        "Follow cooking method for main components",
-        "Combine and serve fresh",
+      instructions: breakfastOption.instructions || [
+        "Gather all ingredients and prepare your workspace",
+        "Follow the specific preparation method for your main ingredient",
+        "Combine ingredients according to recipe proportions",
+        "Cook or prepare using appropriate technique (mixing, cooking, blending)",
+        "Taste and adjust seasoning if needed",
+        "Plate attractively and serve immediately while fresh",
       ],
       tags: [profile.dietType, "breakfast", "nutritious"],
     });

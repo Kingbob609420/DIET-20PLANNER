@@ -96,15 +96,19 @@ NUTRITION TARGETS (per day):
 - Carbs: ${goals.dailyCarbs}g  
 - Fat: ${goals.dailyFat}g
 
+CRITICAL ALLERGY WARNING: ${profile.allergies.length > 0 ? `This person is ALLERGIC to: ${profile.allergies.join(", ").toUpperCase()}. DO NOT include these ingredients in ANY meal, recipe, or ingredient list. This is a MEDICAL REQUIREMENT.` : "No food allergies reported."}
+
 REQUIREMENTS:
 1. Generate exactly 7 days (Monday through Sunday)
 2. Each day should have ${profile.mealsPerDay} meals (breakfast, lunch, dinner${profile.mealsPerDay > 3 ? " + snacks" : ""})
 3. Strictly follow the dietary restrictions (${profile.dietType})
-4. Include realistic cooking times based on preference (${profile.cookingTime})
-5. Provide detailed recipes with ingredients and instructions
-6. Include high-quality, appealing meal names
-7. Vary the cuisine types for interesting variety
-8. Ensure nutritional balance meets the targets
+4. ${profile.allergies.length > 0 ? `ABSOLUTELY AVOID all foods containing: ${profile.allergies.join(", ")}` : "No allergy restrictions"}
+5. Include realistic cooking times based on preference (${profile.cookingTime})
+6. Provide detailed recipes with ingredients and instructions
+7. Include high-quality, appealing meal names
+8. Vary the cuisine types for interesting variety across all 7 days
+9. Ensure each day has completely different meals (no repetition)
+10. Ensure nutritional balance meets the targets
 
 OUTPUT FORMAT - Return valid JSON only:
 {

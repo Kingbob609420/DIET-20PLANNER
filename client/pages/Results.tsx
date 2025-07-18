@@ -55,13 +55,71 @@ interface MealPlan {
 export default function Results() {
   const location = useLocation();
   const { formData } = location.state || {};
-  const [mealPlan, setMealPlan] = useState<MealPlan[]>([]);
+  const [mealPlan, setMealPlan] = useState<WeeklyMealPlan | null>(null);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [selectedDay, setSelectedDay] = useState(0);
 
   useEffect(() => {
-    // Simulate AI meal plan generation
-    const generateMealPlan = () => {
+    // Call real API to generate AI-powered meal plan
+    const generateMealPlan = async () => {
+      if (!formData) {
+        setError("No user profile data available");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        console.log("Generating AI meal plan for:", formData);
+
+        const response = await fetch("/api/generate-meal-plan", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            userProfile: {
+              age: parseInt(formData.age),
+              gender: formData.gender,
+              height: parseInt(formData.height),
+              weight: parseInt(formData.weight),
+              activityLevel: formData.activityLevel,
+              goal: formData.goal,
+              dietType: formData.dietType,
+              allergies: formData.allergies || [],
+              restrictions: formData.restrictions || [],
+              mealsPerDay: parseInt(formData.mealsPerDay),
+              cookingTime: formData.cookingTime,
+              budget: formData.budget,
+            },
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error(`API error: ${response.status}`);
+        }
+
+        const data = await response.json();
+
+        if (data.success && data.mealPlan) {
+          setMealPlan(data.mealPlan);
+          console.log("AI meal plan generated successfully:", data.mealPlan);
+        } else {
+          throw new Error(data.error || "Failed to generate meal plan");
+        }
+      } catch (err) {
+        console.error("Error generating meal plan:", err);
+        setError(
+          err instanceof Error
+            ? err.message
+            : "Failed to generate meal plan. Please try again."
+        );
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    generateMealPlan();
       const sampleMealPlan: MealPlan[] = [
         {
           day: "Monday",
@@ -249,72 +307,59 @@ export default function Results() {
               ],
               tags: ["Vegetarian", "High Fiber", "Protein"],
             },
-            // Choose lunch based on dietary preference
-            formData?.dietType === "vegetarian" ||
-            formData?.dietType === "vegan"
-              ? {
-                  type: "Lunch",
-                  name: "Mediterranean Chickpea Wrap",
-                  calories: 420,
-                  protein: 18,
-                  carbs: 55,
-                  fat: 16,
-                  prep_time: 15,
-                  image:
-                    "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
-                  description:
-                    "Fresh vegetables and protein-rich chickpeas wrapped in a whole wheat tortilla with tahini dressing",
-                  ingredients: [
-                    "1 whole wheat tortilla",
-                    "1/2 cup chickpeas, mashed",
-                    "3 tbsp tahini",
-                    "Lettuce, tomato, cucumber",
-                    "Red bell pepper",
-                    "Lemon juice",
-                  ],
-                  instructions: [
-                    "Mash chickpeas with tahini and lemon juice",
-                    "Spread mixture on tortilla",
-                    "Layer with fresh vegetables and roll tightly",
-                  ],
-                  tags: [
-                    "Vegetarian",
-                    "High Fiber",
-                    "Portable",
-                    "Mediterranean",
-                  ],
-                }
-              : {
-                  type: "Lunch",
-                  name: "Turkey and Hummus Wrap",
-                  calories: 420,
-                  protein: 25,
-                  carbs: 45,
-                  fat: 18,
-                  prep_time: 10,
-                  image:
-                    "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
-                  description:
-                    "Lean turkey wrapped with fresh vegetables and hummus in a whole wheat tortilla",
-                  ingredients: [
-                    "1 whole wheat tortilla",
-                    "4 oz sliced turkey",
-                    "3 tbsp hummus",
-                    "Lettuce, tomato, cucumber",
-                    "Red bell pepper",
-                  ],
-                  instructions: [
-                    "Spread hummus on tortilla",
-                    "Layer turkey and vegetables",
-                    "Roll tightly and slice in half",
-                  ],
-                  tags: [
-                    "High Protein",
-                    "Portable",
-                    "Balanced",
-                    "Non-Vegetarian",
-                  ],
-                },
+                        // Choose lunch based on dietary preference
+            formData?.dietType === "vegetarian" || formData?.dietType === "vegan" ? {
+              type: "Lunch",
+              name: "Mediterranean Chickpea Wrap",
+              calories: 420,
+              protein: 18,
+              carbs: 55,
+              fat: 16,
+              prep_time: 15,
+              image:
+                "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
+              description:
+                "Fresh vegetables and protein-rich chickpeas wrapped in a whole wheat tortilla with tahini dressing",
+              ingredients: [
+                "1 whole wheat tortilla",
+                "1/2 cup chickpeas, mashed",
+                "3 tbsp tahini",
+                "Lettuce, tomato, cucumber",
+                "Red bell pepper",
+                "Lemon juice",
+              ],
+              instructions: [
+                "Mash chickpeas with tahini and lemon juice",
+                "Spread mixture on tortilla",
+                "Layer with fresh vegetables and roll tightly",
+              ],
+              tags: ["Vegetarian", "High Fiber", "Portable", "Mediterranean"],
+            } : {
+              type: "Lunch",
+              name: "Turkey and Hummus Wrap",
+              calories: 420,
+              protein: 25,
+              carbs: 45,
+              fat: 18,
+              prep_time: 10,
+              image:
+                "https://images.unsplash.com/photo-1551782450-17144efb9c50?w=400&h=300&fit=crop",
+              description:
+                "Lean turkey wrapped with fresh vegetables and hummus in a whole wheat tortilla",
+              ingredients: [
+                "1 whole wheat tortilla",
+                "4 oz sliced turkey",
+                "3 tbsp hummus",
+                "Lettuce, tomato, cucumber",
+                "Red bell pepper",
+              ],
+              instructions: [
+                "Spread hummus on tortilla",
+                "Layer turkey and vegetables",
+                "Roll tightly and slice in half",
+              ],
+              tags: ["High Protein", "Portable", "Balanced", "Non-Vegetarian"],
+            },
             {
               type: "Dinner",
               name: "Vegetable Stir-fry with Tofu",

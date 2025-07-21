@@ -761,19 +761,27 @@ function generateFallbackMealPlan(
     const lunchOption = dietMeals.lunches[dayIndex % dietMeals.lunches.length];
     const dinnerOption = dietMeals.dinners[dayIndex % dietMeals.dinners.length];
 
-    // Filter ingredients to remove allergens
-    const safeBreakfastIngredients = filterAllergens(
-      breakfastOption.base_ingredients,
-      profile.allergies,
-    );
-    const safeLunchIngredients = filterAllergens(
-      lunchOption.base_ingredients,
-      profile.allergies,
-    );
-    const safeDinnerIngredients = filterAllergens(
-      dinnerOption.base_ingredients,
-      profile.allergies,
-    );
+    // Filter ingredients to remove allergens and alcohol (if under 21)
+    const getIngredientsForUser = (option: any) => {
+      // Use alcohol-free version if user is under 21 and it exists
+      if (profile.age < 21 && option.alcohol_free_ingredients) {
+        return filterIngredientsForUser(
+          option.alcohol_free_ingredients,
+          profile.allergies,
+          profile.age
+        );
+      }
+      // Otherwise use regular ingredients with filtering
+      return filterIngredientsForUser(
+        option.base_ingredients,
+        profile.allergies,
+        profile.age
+      );
+    };
+
+    const safeBreakfastIngredients = getIngredientsForUser(breakfastOption);
+    const safeLunchIngredients = getIngredientsForUser(lunchOption);
+    const safeDinnerIngredients = getIngredientsForUser(dinnerOption);
 
     // If all ingredients are filtered out due to allergies, use safe alternatives
     if (safeBreakfastIngredients.length === 0) {

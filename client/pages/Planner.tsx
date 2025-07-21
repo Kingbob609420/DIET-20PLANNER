@@ -230,6 +230,41 @@ export default function Planner() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Unit System Selection */}
+              <div className="space-y-4">
+                <Label>Unit System</Label>
+                <RadioGroup
+                  value={formData.unitSystem}
+                  onValueChange={(value: "metric" | "imperial") => {
+                    updateFormData("unitSystem", value);
+                    // Clear height/weight when switching units
+                    updateFormData("height", "");
+                    updateFormData("weight", "");
+                    updateFormData("heightFeet", "");
+                    updateFormData("heightInches", "");
+                  }}
+                >
+                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="metric" id="metric" />
+                    <Label htmlFor="metric" className="flex-1 cursor-pointer">
+                      <div className="font-medium">Metric</div>
+                      <div className="text-sm text-muted-foreground">
+                        Centimeters and kilograms
+                      </div>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="imperial" id="imperial" />
+                    <Label htmlFor="imperial" className="flex-1 cursor-pointer">
+                      <div className="font-medium">Imperial</div>
+                      <div className="text-sm text-muted-foreground">
+                        Feet, inches and pounds
+                      </div>
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="age">Age</Label>
@@ -259,28 +294,67 @@ export default function Planner() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="height">Height (cm)</Label>
-                  <Input
-                    id="height"
-                    type="number"
-                    placeholder="170"
-                    value={formData.height}
-                    onChange={(e) => updateFormData("height", e.target.value)}
-                  />
+              {/* Dynamic Height/Weight Fields Based on Unit System */}
+              {formData.unitSystem === "metric" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="height">Height (cm)</Label>
+                    <Input
+                      id="height"
+                      type="number"
+                      placeholder="170"
+                      value={formData.height}
+                      onChange={(e) => updateFormData("height", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Input
+                      id="weight"
+                      type="number"
+                      placeholder="70"
+                      value={formData.weight}
+                      onChange={(e) => updateFormData("weight", e.target.value)}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="weight">Weight (kg)</Label>
-                  <Input
-                    id="weight"
-                    type="number"
-                    placeholder="70"
-                    value={formData.weight}
-                    onChange={(e) => updateFormData("weight", e.target.value)}
-                  />
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Height</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Input
+                          type="number"
+                          placeholder="5"
+                          value={formData.heightFeet}
+                          onChange={(e) => updateFormData("heightFeet", e.target.value)}
+                        />
+                        <Label className="text-sm text-muted-foreground mt-1">Feet</Label>
+                      </div>
+                      <div>
+                        <Input
+                          type="number"
+                          placeholder="8"
+                          value={formData.heightInches}
+                          onChange={(e) => updateFormData("heightInches", e.target.value)}
+                        />
+                        <Label className="text-sm text-muted-foreground mt-1">Inches</Label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="weight-imperial">Weight (lbs)</Label>
+                    <Input
+                      id="weight-imperial"
+                      type="number"
+                      placeholder="154"
+                      value={formData.weight}
+                      onChange={(e) => updateFormData("weight", e.target.value)}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         )}

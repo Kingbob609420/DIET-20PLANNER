@@ -60,6 +60,29 @@ interface FormData {
   budget: string;
 }
 
+// Unit conversion utilities
+const convertHeightToMetric = (feet: string, inches: string): number => {
+  const ft = parseFloat(feet) || 0;
+  const inch = parseFloat(inches) || 0;
+  return Math.round((ft * 12 + inch) * 2.54); // Convert to cm
+};
+
+const convertWeightToMetric = (pounds: string): number => {
+  const lbs = parseFloat(pounds) || 0;
+  return Math.round(lbs * 0.453592); // Convert to kg
+};
+
+const convertHeightToImperial = (cm: number): { feet: number; inches: number } => {
+  const totalInches = cm / 2.54;
+  const feet = Math.floor(totalInches / 12);
+  const inches = Math.round(totalInches % 12);
+  return { feet, inches };
+};
+
+const convertWeightToImperial = (kg: number): number => {
+  return Math.round(kg * 2.20462); // Convert to lbs
+};
+
 export default function Planner() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);

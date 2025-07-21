@@ -111,8 +111,22 @@ export default function Planner() {
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
     } else {
+      // Convert to metric units for API consistency
+      const processedFormData = { ...formData };
+
+      if (formData.unitSystem === "imperial") {
+        // Convert height from feet/inches to cm
+        processedFormData.height = convertHeightToMetric(
+          formData.heightFeet,
+          formData.heightInches
+        ).toString();
+
+        // Convert weight from lbs to kg
+        processedFormData.weight = convertWeightToMetric(formData.weight).toString();
+      }
+
       // Generate meal plan
-      navigate("/results", { state: { formData } });
+      navigate("/results", { state: { formData: processedFormData } });
     }
   };
 

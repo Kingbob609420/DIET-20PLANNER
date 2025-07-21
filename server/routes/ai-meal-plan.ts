@@ -116,7 +116,8 @@ REQUIREMENTS:
 3. PRIORITIZE ${profile.goal.toUpperCase()} WEIGHT GOAL - choose meal types and portions specifically for this objective
 4. STRICTLY ADHERE to the ${profile.dietType.toUpperCase()} diet - this is NON-NEGOTIABLE
 5. ${profile.allergies.length > 0 ? `ABSOLUTELY AVOID all foods containing: ${profile.allergies.join(", ")}` : "No allergy restrictions"}
-6. Ensure meal choices directly support the ${profile.goal} weight goal with appropriate calorie density and macronutrient ratios
+6. ${profile.age < 21 ? `ABSOLUTELY NO ALCOHOL - User is under 21, so NO wine, beer, or any alcoholic ingredients in recipes. Use broth, vinegar, or non-alcoholic substitutes instead.` : "No age-related alcohol restrictions"}
+7. Ensure meal choices directly support the ${profile.goal} weight goal with appropriate calorie density and macronutrient ratios
 7. Include realistic cooking times based on preference (${profile.cookingTime})
 8. Provide VERY DETAILED recipes with specific measurements and comprehensive step-by-step cooking instructions
 9. Include high-quality, appealing meal names

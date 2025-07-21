@@ -168,7 +168,7 @@ struct PlannerView: View {
 // MARK: - Step 1: Personal Information
 struct Step1PersonalInfoView: View {
     @EnvironmentObject var profileStore: UserProfileStore
-    
+
     var body: some View {
         VStack(spacing: 0) {
             StepHeaderView(
@@ -176,22 +176,40 @@ struct Step1PersonalInfoView: View {
                 title: "Personal Information",
                 description: "Help us understand your basic profile to create the perfect meal plan"
             )
-            
+
             VStack(spacing: 24) {
+                // Unit System Selection
+                VStack(alignment: .leading, spacing: 16) {
+                    Text("Unit System")
+                        .font(.headline)
+
+                    VStack(spacing: 12) {
+                        ForEach(UnitSystem.allCases, id: \.self) { unitSystem in
+                            RadioButtonView(
+                                isSelected: profileStore.profile.unitSystem == unitSystem,
+                                title: unitSystem.displayName,
+                                description: unitSystem.description
+                            ) {
+                                profileStore.updateUnitSystem(unitSystem)
+                            }
+                        }
+                    }
+                }
+
                 HStack(spacing: 16) {
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Age")
                             .font(.headline)
-                        
+
                         TextField("25", value: $profileStore.profile.age, format: .number)
                             .textFieldStyle(CustomTextFieldStyle())
                             .keyboardType(.numberPad)
                     }
-                    
+
                     VStack(alignment: .leading, spacing: 8) {
                         Text("Gender")
                             .font(.headline)
-                        
+
                         Menu {
                             ForEach(Gender.allCases, id: \.self) { gender in
                                 Button(gender.displayName) {
@@ -213,24 +231,72 @@ struct Step1PersonalInfoView: View {
                         }
                     }
                 }
-                
-                HStack(spacing: 16) {
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Height (cm)")
-                            .font(.headline)
-                        
-                        TextField("170", value: $profileStore.profile.height, format: .number)
-                            .textFieldStyle(CustomTextFieldStyle())
-                            .keyboardType(.numberPad)
+
+                // Dynamic Height/Weight Fields Based on Unit System
+                if profileStore.profile.unitSystem == .metric {
+                    HStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Height (cm)")
+                                .font(.headline)
+
+                            TextField("170", value: $profileStore.profile.height, format: .number)
+                                .textFieldStyle(CustomTextFieldStyle())
+                                .keyboardType(.numberPad)
+                        }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Weight (kg)")
+                                .font(.headline)
+
+                            TextField("70", value: $profileStore.profile.weight, format: .number)
+                                .textFieldStyle(CustomTextFieldStyle())
+                                .keyboardType(.numberPad)
+                        }
                     }
-                    
-                    VStack(alignment: .leading, spacing: 8) {
-                        Text("Weight (kg)")
-                            .font(.headline)
-                        
-                        TextField("70", value: $profileStore.profile.weight, format: .number)
-                            .textFieldStyle(CustomTextFieldStyle())
-                            .keyboardType(.numberPad)
+                } else {
+                    VStack(spacing: 16) {
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Height")
+                                .font(.headline)
+
+                            HStack(spacing: 12) {
+                                VStack(spacing: 4) {
+                                    TextField("5", value: $profileStore.heightFeet, format: .number)
+                                        .textFieldStyle(CustomTextFieldStyle())
+                                        .keyboardType(.numberPad)
+                                        .onChange(of: profileStore.heightFeet) { _ in
+                                            profileStore.convertHeightToMetric()
+                                        }
+                                    Text("Feet")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+
+                                VStack(spacing: 4) {
+                                    TextField("8", value: $profileStore.heightInches, format: .number)
+                                        .textFieldStyle(CustomTextFieldStyle())
+                                        .keyboardType(.numberPad)
+                                        .onChange(of: profileStore.heightInches) { _ in
+                                            profileStore.convertHeightToMetric()
+                                        }
+                                    Text("Inches")
+                                        .font(.caption)
+                                        .foregroundColor(.secondary)
+                                }
+                            }
+                        }
+
+                        VStack(alignment: .leading, spacing: 8) {
+                            Text("Weight (lbs)")
+                                .font(.headline)
+
+                            TextField("154", value: $profileStore.weightPounds, format: .number)
+                                .textFieldStyle(CustomTextFieldStyle())
+                                .keyboardType(.numberPad)
+                                .onChange(of: profileStore.weightPounds) { _ in
+                                    profileStore.convertWeightToMetric()
+                                }
+                        }
                     }
                 }
             }

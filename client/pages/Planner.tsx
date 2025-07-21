@@ -142,9 +142,22 @@ export default function Planner() {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return (
-          formData.age && formData.gender && formData.height && formData.weight
-        );
+        if (formData.unitSystem === "imperial") {
+          return (
+            formData.age &&
+            formData.gender &&
+            formData.heightFeet &&
+            formData.heightInches &&
+            formData.weight
+          );
+        } else {
+          return (
+            formData.age &&
+            formData.gender &&
+            formData.height &&
+            formData.weight
+          );
+        }
       case 2:
         return formData.activityLevel && formData.goal;
       case 3:

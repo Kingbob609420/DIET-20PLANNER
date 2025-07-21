@@ -65,6 +65,7 @@ class UserProfileStore: ObservableObject {
             gender: .male,
             height: 0,
             weight: 0,
+            unitSystem: .metric,
             activityLevel: .sedentary,
             goal: .maintain,
             dietType: .omnivore,
@@ -75,6 +76,44 @@ class UserProfileStore: ObservableObject {
             budget: nil
         )
         currentStep = 1
+        heightFeet = 0
+        heightInches = 0
+        weightPounds = 0
+    }
+
+    // Unit conversion utilities
+    func convertHeightToMetric() {
+        let totalInches = Double(heightFeet * 12 + heightInches)
+        profile.height = Int(totalInches * 2.54) // Convert to cm
+    }
+
+    func convertWeightToMetric() {
+        profile.weight = Int(Double(weightPounds) * 0.453592) // Convert to kg
+    }
+
+    func convertHeightToImperial() {
+        let totalInches = Double(profile.height) / 2.54
+        heightFeet = Int(totalInches / 12)
+        heightInches = Int(totalInches.truncatingRemainder(dividingBy: 12))
+    }
+
+    func convertWeightToImperial() {
+        weightPounds = Int(Double(profile.weight) * 2.20462) // Convert to lbs
+    }
+
+    func updateUnitSystem(_ newSystem: UnitSystem) {
+        if profile.unitSystem != newSystem {
+            if newSystem == .imperial {
+                // Convert current metric values to imperial for display
+                convertHeightToImperial()
+                convertWeightToImperial()
+            } else {
+                // Convert current imperial values to metric
+                convertHeightToMetric()
+                convertWeightToMetric()
+            }
+            profile.unitSystem = newSystem
+        }
     }
 }
 

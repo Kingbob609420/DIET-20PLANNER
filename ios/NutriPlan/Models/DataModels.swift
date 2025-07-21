@@ -106,13 +106,31 @@ enum CookingTime: String, CaseIterable, Codable {
 
 enum Budget: String, CaseIterable, Codable {
     case low, medium, high, flexible
-    
+
     var displayName: String {
         switch self {
         case .low: return "Budget-friendly"
         case .medium: return "Moderate"
         case .high: return "Premium ingredients"
         case .flexible: return "Flexible"
+        }
+    }
+}
+
+enum UnitSystem: String, CaseIterable, Codable {
+    case metric, imperial
+
+    var displayName: String {
+        switch self {
+        case .metric: return "Metric"
+        case .imperial: return "Imperial"
+        }
+    }
+
+    var description: String {
+        switch self {
+        case .metric: return "Centimeters and kilograms"
+        case .imperial: return "Feet, inches and pounds"
         }
     }
 }

@@ -7,6 +7,7 @@ class UserProfileStore: ObservableObject {
         gender: .male,
         height: 0,
         weight: 0,
+        unitSystem: .metric,
         activityLevel: .sedentary,
         goal: .maintain,
         dietType: .omnivore,
@@ -16,6 +17,11 @@ class UserProfileStore: ObservableObject {
         cookingTime: .moderate,
         budget: nil
     )
+
+    // Temporary storage for imperial units (display only)
+    @Published var heightFeet: Int = 0
+    @Published var heightInches: Int = 0
+    @Published var weightPounds: Int = 0
     
     @Published var currentStep = 1
     @Published var isFormValid = false

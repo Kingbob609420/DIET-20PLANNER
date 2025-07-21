@@ -41,6 +41,9 @@ interface FormData {
   gender: string;
   height: string;
   weight: string;
+  unitSystem: "metric" | "imperial";
+  heightFeet: string;
+  heightInches: string;
 
   // Activity & Goals
   activityLevel: string;

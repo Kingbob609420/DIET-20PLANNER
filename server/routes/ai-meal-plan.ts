@@ -167,7 +167,41 @@ function containsAllergen(ingredient: string, allergies: string[]): boolean {
   );
 }
 
-// Filter meal ingredients to exclude allergens
+// Check if ingredient contains alcohol
+function containsAlcohol(ingredient: string): boolean {
+  const alcoholicIngredients = [
+    'wine', 'beer', 'rum', 'whiskey', 'vodka', 'gin', 'brandy',
+    'champagne', 'sherry', 'port', 'sake', 'mirin', 'liqueur',
+    'bourbon', 'scotch', 'tequila', 'cognac'
+  ];
+
+  return alcoholicIngredients.some((alcohol) =>
+    ingredient.toLowerCase().includes(alcohol.toLowerCase()),
+  );
+}
+
+// Filter meal ingredients to exclude allergens and alcohol (if user is under 21)
+function filterIngredientsForUser(
+  ingredients: string[],
+  allergies: string[],
+  userAge: number
+): string[] {
+  return ingredients.filter(ingredient => {
+    // Filter out allergens
+    if (containsAllergen(ingredient, allergies)) {
+      return false;
+    }
+
+    // Filter out alcohol if user is under 21
+    if (userAge < 21 && containsAlcohol(ingredient)) {
+      return false;
+    }
+
+    return true;
+  });
+}
+
+// Filter meal ingredients to exclude allergens (legacy function)
 function filterAllergens(ingredients: string[], allergies: string[]): string[] {
   return ingredients.filter(
     (ingredient) => !containsAllergen(ingredient, allergies),

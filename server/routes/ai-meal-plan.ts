@@ -108,6 +108,8 @@ ${profile.dietType === "omnivore" ? "- OMNIVORE: All food types allowed includin
 
 CRITICAL ALLERGY WARNING: ${profile.allergies.length > 0 ? `This person is ALLERGIC to: ${profile.allergies.join(", ").toUpperCase()}. DO NOT include these ingredients in ANY meal, recipe, or ingredient list. This is a MEDICAL REQUIREMENT.` : "No food allergies reported."}
 
+AGE RESTRICTIONS: ${profile.age < 21 ? `This person is UNDER 21 years old. DO NOT include any alcoholic ingredients such as wine, beer, rum, whiskey, or any other alcoholic beverages in recipes. Use alternatives like broth, vinegar, or non-alcoholic substitutes for cooking liquids.` : "No age-related alcohol restrictions."}
+
 REQUIREMENTS:
 1. Generate exactly 7 days (Monday through Sunday)
 2. Each day should have ${profile.mealsPerDay} meals (breakfast, lunch, dinner${profile.mealsPerDay > 3 ? " + snacks" : ""})

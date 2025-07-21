@@ -110,8 +110,16 @@ export default function Planner() {
   const progress = (currentStep / totalSteps) * 100;
 
   const handleNext = () => {
+    if (!isStepValid()) {
+      setShowValidationHint(true);
+      setTimeout(() => setShowValidationHint(false), 3000);
+      return;
+    }
+
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      // Smooth scroll to top when moving to next step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
       // Convert to metric units for API consistency
       const processedFormData = { ...formData };

@@ -47,7 +47,11 @@ class UserProfileStore: ObservableObject {
     func validateCurrentStep() -> Bool {
         switch currentStep {
         case 1:
-            return profile.age > 0 && profile.height > 0 && profile.weight > 0
+            if profile.unitSystem == .imperial {
+                return profile.age > 0 && heightFeet > 0 && heightInches >= 0 && weightPounds > 0
+            } else {
+                return profile.age > 0 && profile.height > 0 && profile.weight > 0
+            }
         case 2:
             return true // Activity level and goal are always valid (enum)
         case 3:

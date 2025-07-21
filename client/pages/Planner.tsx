@@ -706,27 +706,35 @@ export default function Planner() {
                 </div>
               </div>
 
-              <Button
-                onClick={handleNext}
-                disabled={!isStepValid()}
-                className={`px-6 py-3 text-white font-semibold transition-all duration-200 hover:scale-105 ${
-                  isStepValid()
-                    ? 'bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl'
-                    : 'bg-gray-400 cursor-not-allowed'
-                }`}
-              >
-                {currentStep === totalSteps ? (
-                  <>
-                    <Zap className="w-4 h-4 mr-2" />
-                    Generate Plan
-                  </>
-                ) : (
-                  <>
-                    Next
-                    <ArrowRight className="w-4 h-4 ml-2" />
-                  </>
+              <div className="relative">
+                <Button
+                  onClick={handleNext}
+                  className={`px-6 py-3 text-white font-semibold transition-all duration-200 hover:scale-105 relative ${
+                    isStepValid()
+                      ? 'bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl'
+                      : 'bg-gray-400 hover:bg-gray-500'
+                  }`}
+                >
+                  {currentStep === totalSteps ? (
+                    <>
+                      <Zap className="w-4 h-4 mr-2" />
+                      Generate Plan
+                    </>
+                  ) : (
+                    <>
+                      Next
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+
+                {showValidationHint && (
+                  <div className="absolute -top-12 right-0 bg-red-500 text-white text-xs px-3 py-1 rounded-md shadow-lg animate-bounce">
+                    Please fill all required fields
+                    <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-500"></div>
+                  </div>
                 )}
-              </Button>
+              </div>
             </div>
           </div>
         </div>

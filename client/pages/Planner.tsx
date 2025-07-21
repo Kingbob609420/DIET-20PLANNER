@@ -185,8 +185,8 @@ export default function Planner() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-green-950/20 dark:via-background dark:to-green-950/20">
-      {/* Navigation */}
-      <nav className="border-b border-border/40 bg-background/80 backdrop-blur-xl">
+      {/* Sticky Navigation */}
+      <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-xl shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <ArrowLeft className="w-5 h-5" />
@@ -206,15 +206,16 @@ export default function Planner() {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between text-sm text-muted-foreground mb-2">
-            <span>Progress</span>
-            <span>{Math.round(progress)}%</span>
+      <div className="relative">
+        <div className="container mx-auto px-4 py-6 max-w-2xl">
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <span>Progress</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-3 rounded-full" />
           </div>
-          <Progress value={progress} className="h-2" />
-        </div>
 
         {/* Step 1: Personal Information */}
         {currentStep === 1 && (
@@ -662,25 +663,60 @@ export default function Planner() {
           </Card>
         )}
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            className="px-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Previous
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={!isStepValid()}
-            className="px-8 bg-primary hover:bg-primary/90"
-          >
-            {currentStep === totalSteps ? "Generate Plan" : "Next"}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          {/* Spacer for floating buttons */}
+          <div className="h-24"></div>
+        </div>
+
+        {/* Floating Navigation Buttons */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border/40 shadow-lg">
+          <div className="container mx-auto px-4 py-4 max-w-2xl">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 1}
+                className="px-6 py-3 transition-all duration-200 hover:scale-105"
+                style={{ opacity: currentStep === 1 ? 0.5 : 1 }}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+
+              <div className="text-center">
+                <div className="text-xs text-muted-foreground mb-1">
+                  Step {currentStep} of {totalSteps}
+                </div>
+                <div className="w-16 bg-muted rounded-full h-1">
+                  <div
+                    className="bg-primary h-1 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <Button
+                onClick={handleNext}
+                disabled={!isStepValid()}
+                className={`px-6 py-3 text-white font-semibold transition-all duration-200 hover:scale-105 ${
+                  isStepValid()
+                    ? 'bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl'
+                    : 'bg-gray-400 cursor-not-allowed'
+                }`}
+              >
+                {currentStep === totalSteps ? (
+                  <>
+                    <Zap className="w-4 h-4 mr-2" />
+                    Generate Plan
+                  </>
+                ) : (
+                  <>
+                    Next
+                    <ArrowRight className="w-4 h-4 ml-2" />
+                  </>
+                )}
+              </Button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

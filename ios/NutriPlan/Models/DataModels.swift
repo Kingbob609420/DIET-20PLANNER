@@ -4,8 +4,9 @@ import Foundation
 struct UserProfile: Codable {
     var age: Int
     var gender: Gender
-    var height: Int // cm
-    var weight: Int // kg
+    var height: Int // cm (always stored in metric)
+    var weight: Int // kg (always stored in metric)
+    var unitSystem: UnitSystem
     var activityLevel: ActivityLevel
     var goal: Goal
     var dietType: DietType

@@ -264,7 +264,7 @@ export default function Results() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+              <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
                     {formData.age}
@@ -273,10 +273,24 @@ export default function Results() {
                 </div>
                 <div className="text-center">
                   <div className="text-2xl font-bold text-primary">
-                    {formData.weight}kg
+                    {formData.unitSystem === "imperial"
+                      ? `${Math.round(parseInt(formData.weight) * 2.20462)}lbs`
+                      : `${formData.weight}kg`
+                    }
                   </div>
                   <div className="text-sm text-muted-foreground">
                     Current Weight
+                  </div>
+                </div>
+                <div className="text-center">
+                  <div className="text-2xl font-bold text-primary">
+                    {formData.unitSystem === "imperial"
+                      ? `${formData.heightFeet || Math.floor(parseInt(formData.height) / 30.48)}'${formData.heightInches || Math.round((parseInt(formData.height) / 2.54) % 12)}"`
+                      : `${formData.height}cm`
+                    }
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Height
                   </div>
                 </div>
                 <div className="text-center">

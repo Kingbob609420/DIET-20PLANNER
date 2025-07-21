@@ -33,6 +33,7 @@ import {
   Heart,
   Calendar,
   Clock,
+  Zap,
 } from "lucide-react";
 
 interface FormData {

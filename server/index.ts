@@ -1,7 +1,8 @@
+import "dotenv/config";
 import express from "express";
 import cors from "cors";
 import { handleDemo } from "./routes/demo";
-import { generateMealPlan, getNutritionGoals } from "./routes/meal-plan";
+import { generateAIMealPlan, getNutritionGoals } from "./routes/ai-meal-plan";
 
 export function createServer() {
   const app = express();
@@ -19,7 +20,7 @@ export function createServer() {
   app.get("/api/demo", handleDemo);
 
   // Diet planner API routes
-  app.post("/api/generate-meal-plan", generateMealPlan);
+  app.post("/api/generate-meal-plan", generateAIMealPlan);
   app.post("/api/nutrition-goals", getNutritionGoals);
 
   return app;

@@ -33,6 +33,7 @@ import {
   Heart,
   Calendar,
   Clock,
+  Zap,
 } from "lucide-react";
 
 interface FormData {
@@ -41,6 +42,9 @@ interface FormData {
   gender: string;
   height: string;
   weight: string;
+  unitSystem: "metric" | "imperial";
+  heightFeet: string;
+  heightInches: string;
 
   // Activity & Goals
   activityLevel: string;
@@ -57,14 +61,41 @@ interface FormData {
   budget: string;
 }
 
+// Unit conversion utilities
+const convertHeightToMetric = (feet: string, inches: string): number => {
+  const ft = parseFloat(feet) || 0;
+  const inch = parseFloat(inches) || 0;
+  return Math.round((ft * 12 + inch) * 2.54); // Convert to cm
+};
+
+const convertWeightToMetric = (pounds: string): number => {
+  const lbs = parseFloat(pounds) || 0;
+  return Math.round(lbs * 0.453592); // Convert to kg
+};
+
+const convertHeightToImperial = (cm: number): { feet: number; inches: number } => {
+  const totalInches = cm / 2.54;
+  const feet = Math.floor(totalInches / 12);
+  const inches = Math.round(totalInches % 12);
+  return { feet, inches };
+};
+
+const convertWeightToImperial = (kg: number): number => {
+  return Math.round(kg * 2.20462); // Convert to lbs
+};
+
 export default function Planner() {
   const navigate = useNavigate();
   const [currentStep, setCurrentStep] = useState(1);
+  const [showValidationHint, setShowValidationHint] = useState(false);
   const [formData, setFormData] = useState<FormData>({
     age: "",
     gender: "",
     height: "",
     weight: "",
+    unitSystem: "metric",
+    heightFeet: "",
+    heightInches: "",
     activityLevel: "",
     goal: "",
     dietType: "",
@@ -79,17 +110,41 @@ export default function Planner() {
   const progress = (currentStep / totalSteps) * 100;
 
   const handleNext = () => {
+    if (!isStepValid()) {
+      setShowValidationHint(true);
+      setTimeout(() => setShowValidationHint(false), 3000);
+      return;
+    }
+
     if (currentStep < totalSteps) {
       setCurrentStep(currentStep + 1);
+      // Smooth scroll to top when moving to next step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     } else {
+      // Convert to metric units for API consistency
+      const processedFormData = { ...formData };
+
+      if (formData.unitSystem === "imperial") {
+        // Convert height from feet/inches to cm
+        processedFormData.height = convertHeightToMetric(
+          formData.heightFeet,
+          formData.heightInches
+        ).toString();
+
+        // Convert weight from lbs to kg
+        processedFormData.weight = convertWeightToMetric(formData.weight).toString();
+      }
+
       // Generate meal plan
-      navigate("/results", { state: { formData } });
+      navigate("/results", { state: { formData: processedFormData } });
     }
   };
 
   const handlePrevious = () => {
     if (currentStep > 1) {
       setCurrentStep(currentStep - 1);
+      // Smooth scroll to top when moving to previous step
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
   };
 
@@ -113,9 +168,22 @@ export default function Planner() {
   const isStepValid = () => {
     switch (currentStep) {
       case 1:
-        return (
-          formData.age && formData.gender && formData.height && formData.weight
-        );
+        if (formData.unitSystem === "imperial") {
+          return (
+            formData.age &&
+            formData.gender &&
+            formData.heightFeet &&
+            formData.heightInches &&
+            formData.weight
+          );
+        } else {
+          return (
+            formData.age &&
+            formData.gender &&
+            formData.height &&
+            formData.weight
+          );
+        }
       case 2:
         return formData.activityLevel && formData.goal;
       case 3:
@@ -129,8 +197,8 @@ export default function Planner() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-green-50 via-white to-green-50 dark:from-green-950/20 dark:via-background dark:to-green-950/20">
-      {/* Navigation */}
-      <nav className="border-b border-border/40 bg-background/80 backdrop-blur-xl">
+      {/* Sticky Navigation */}
+      <nav className="sticky top-0 z-50 border-b border-border/40 bg-background/95 backdrop-blur-xl shadow-sm">
         <div className="container mx-auto px-4 py-4 flex items-center justify-between">
           <Link to="/" className="flex items-center space-x-2">
             <ArrowLeft className="w-5 h-5" />
@@ -150,15 +218,16 @@ export default function Planner() {
         </div>
       </nav>
 
-      <div className="container mx-auto px-4 py-8 max-w-2xl">
-        {/* Progress Bar */}
-        <div className="mb-8">
-          <div className="flex justify-between text-sm text-muted-foreground mb-2">
-            <span>Progress</span>
-            <span>{Math.round(progress)}%</span>
+      <div className="relative">
+        <div className="container mx-auto px-4 py-6 max-w-2xl">
+          {/* Progress Bar */}
+          <div className="mb-8">
+            <div className="flex justify-between text-sm text-muted-foreground mb-2">
+              <span>Progress</span>
+              <span>{Math.round(progress)}%</span>
+            </div>
+            <Progress value={progress} className="h-3 rounded-full" />
           </div>
-          <Progress value={progress} className="h-2" />
-        </div>
 
         {/* Step 1: Personal Information */}
         {currentStep === 1 && (
@@ -174,6 +243,41 @@ export default function Planner() {
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6">
+              {/* Unit System Selection */}
+              <div className="space-y-4">
+                <Label>Unit System</Label>
+                <RadioGroup
+                  value={formData.unitSystem}
+                  onValueChange={(value: "metric" | "imperial") => {
+                    updateFormData("unitSystem", value);
+                    // Clear height/weight when switching units
+                    updateFormData("height", "");
+                    updateFormData("weight", "");
+                    updateFormData("heightFeet", "");
+                    updateFormData("heightInches", "");
+                  }}
+                >
+                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="metric" id="metric" />
+                    <Label htmlFor="metric" className="flex-1 cursor-pointer">
+                      <div className="font-medium">Metric</div>
+                      <div className="text-sm text-muted-foreground">
+                        Centimeters and kilograms
+                      </div>
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-2 p-4 border rounded-lg hover:bg-muted/50">
+                    <RadioGroupItem value="imperial" id="imperial" />
+                    <Label htmlFor="imperial" className="flex-1 cursor-pointer">
+                      <div className="font-medium">Imperial</div>
+                      <div className="text-sm text-muted-foreground">
+                        Feet, inches and pounds
+                      </div>
+                    </Label>
+                  </div>
+                </RadioGroup>
+              </div>
+
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
                   <Label htmlFor="age">Age</Label>
@@ -203,28 +307,67 @@ export default function Planner() {
                 </div>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="height">Height (cm)</Label>
-                  <Input
-                    id="height"
-                    type="number"
-                    placeholder="170"
-                    value={formData.height}
-                    onChange={(e) => updateFormData("height", e.target.value)}
-                  />
+              {/* Dynamic Height/Weight Fields Based on Unit System */}
+              {formData.unitSystem === "metric" ? (
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <Label htmlFor="height">Height (cm)</Label>
+                    <Input
+                      id="height"
+                      type="number"
+                      placeholder="170"
+                      value={formData.height}
+                      onChange={(e) => updateFormData("height", e.target.value)}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="weight">Weight (kg)</Label>
+                    <Input
+                      id="weight"
+                      type="number"
+                      placeholder="70"
+                      value={formData.weight}
+                      onChange={(e) => updateFormData("weight", e.target.value)}
+                    />
+                  </div>
                 </div>
-                <div className="space-y-2">
-                  <Label htmlFor="weight">Weight (kg)</Label>
-                  <Input
-                    id="weight"
-                    type="number"
-                    placeholder="70"
-                    value={formData.weight}
-                    onChange={(e) => updateFormData("weight", e.target.value)}
-                  />
+              ) : (
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label>Height</Label>
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <Input
+                          type="number"
+                          placeholder="5"
+                          value={formData.heightFeet}
+                          onChange={(e) => updateFormData("heightFeet", e.target.value)}
+                        />
+                        <Label className="text-sm text-muted-foreground mt-1">Feet</Label>
+                      </div>
+                      <div>
+                        <Input
+                          type="number"
+                          placeholder="8"
+                          value={formData.heightInches}
+                          onChange={(e) => updateFormData("heightInches", e.target.value)}
+                        />
+                        <Label className="text-sm text-muted-foreground mt-1">Inches</Label>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="space-y-2">
+                    <Label htmlFor="weight-imperial">Weight (lbs)</Label>
+                    <Input
+                      id="weight-imperial"
+                      type="number"
+                      placeholder="154"
+                      value={formData.weight}
+                      onChange={(e) => updateFormData("weight", e.target.value)}
+                    />
+                  </div>
                 </div>
-              </div>
+              )}
             </CardContent>
           </Card>
         )}
@@ -532,25 +675,68 @@ export default function Planner() {
           </Card>
         )}
 
-        {/* Navigation Buttons */}
-        <div className="flex justify-between mt-8">
-          <Button
-            variant="outline"
-            onClick={handlePrevious}
-            disabled={currentStep === 1}
-            className="px-8"
-          >
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Previous
-          </Button>
-          <Button
-            onClick={handleNext}
-            disabled={!isStepValid()}
-            className="px-8 bg-primary hover:bg-primary/90"
-          >
-            {currentStep === totalSteps ? "Generate Plan" : "Next"}
-            <ArrowRight className="w-4 h-4 ml-2" />
-          </Button>
+          {/* Spacer for floating buttons */}
+          <div className="h-24"></div>
+        </div>
+
+        {/* Floating Navigation Buttons */}
+        <div className="fixed bottom-0 left-0 right-0 z-40 bg-background/95 backdrop-blur-xl border-t border-border/40 shadow-lg">
+          <div className="container mx-auto px-4 py-4 max-w-2xl">
+            <div className="flex justify-between items-center">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentStep === 1}
+                className="px-6 py-3 transition-all duration-200 hover:scale-105"
+                style={{ opacity: currentStep === 1 ? 0.5 : 1 }}
+              >
+                <ArrowLeft className="w-4 h-4 mr-2" />
+                Previous
+              </Button>
+
+              <div className="text-center">
+                <div className="text-xs text-muted-foreground mb-1">
+                  Step {currentStep} of {totalSteps}
+                </div>
+                <div className="w-16 bg-muted rounded-full h-1">
+                  <div
+                    className="bg-primary h-1 rounded-full transition-all duration-300 ease-out"
+                    style={{ width: `${progress}%` }}
+                  ></div>
+                </div>
+              </div>
+
+              <div className="relative">
+                <Button
+                  onClick={handleNext}
+                  className={`px-6 py-3 text-white font-semibold transition-all duration-200 hover:scale-105 relative ${
+                    isStepValid()
+                      ? 'bg-primary hover:bg-primary/90 shadow-lg hover:shadow-xl'
+                      : 'bg-gray-400 hover:bg-gray-500'
+                  }`}
+                >
+                  {currentStep === totalSteps ? (
+                    <>
+                      <Zap className="w-4 h-4 mr-2" />
+                      Generate Plan
+                    </>
+                  ) : (
+                    <>
+                      Next
+                      <ArrowRight className="w-4 h-4 ml-2" />
+                    </>
+                  )}
+                </Button>
+
+                {showValidationHint && (
+                  <div className="absolute -top-12 right-0 bg-red-500 text-white text-xs px-3 py-1 rounded-md shadow-lg animate-bounce">
+                    Please fill all required fields
+                    <div className="absolute top-full right-4 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-red-500"></div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
